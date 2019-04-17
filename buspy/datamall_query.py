@@ -22,7 +22,7 @@ def get_arrival_time(bus_stop_code, service_no):
     return parse_arrival_data(resp.json())
 
 def check_bus_coming(bus_stop_code, service_no, requested_time_str):
-    arrival_time = datetime.datetime.fromisoformat((get_arrival_time(bus_stop_code, service_no))
+    arrival_time = datetime.datetime.fromisoformat(get_arrival_time(bus_stop_code, service_no))
     requested_time = datetime.datetime.fromisoformat(requested_time_str)
 
     delta = datetime.timedelta(minutes = 10)
