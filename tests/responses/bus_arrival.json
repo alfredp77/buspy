@@ -1,0 +1,43 @@
+{
+    "odata.metadata": "http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element",
+    "BusStopCode": "67379",
+    "Services": [
+      {
+        "ServiceNo": "372",
+        "Operator": "SBST",
+        "NextBus": {
+          "OriginCode": "67009",
+          "DestinationCode": "67009",
+          "EstimatedArrival": "2019-04-17T13:37:43+08:00",
+          "Latitude": "1.3917475000000001",
+          "Longitude": "103.8866435",
+          "VisitNumber": "1",
+          "Load": "SEA",
+          "Feature": "WAB",
+          "Type": "SD"
+        },
+        "NextBus2": {
+          "OriginCode": "67009",
+          "DestinationCode": "67009",
+          "EstimatedArrival": "2019-04-17T13:46:24+08:00",
+          "Latitude": "1.3916568333333332",
+          "Longitude": "103.898046",
+          "VisitNumber": "1",
+          "Load": "SEA",
+          "Feature": "WAB",
+          "Type": "SD"
+        },
+        "NextBus3": {
+          "OriginCode": "67009",
+          "DestinationCode": "67009",
+          "EstimatedArrival": "2019-04-17T13:54:01+08:00",
+          "Latitude": "1.390576",
+          "Longitude": "103.88956833333333",
+          "VisitNumber": "1",
+          "Load": "SEA",
+          "Feature": "WAB",
+          "Type": "SD"
+        }
+      }
+    ]
+  }
