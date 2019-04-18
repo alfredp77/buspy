@@ -9,6 +9,16 @@ def now():
     timezone = pytz.timezone("Asia/Singapore")
     return timezone.localize(d_naive)    
 
+def gettime(time_str, current_time=None):
+    current_time = current_time or now()
+    split_time = time_str.split(":")
+    hour = int(split_time[0])
+    minute = int(split_time[1])
+    try:
+        return current_time.replace(hour=hour,minute=minute,second=0,microsecond=0)         
+    except:
+        return None
+
 class TimeHelper:
     def __init__(self, minutes_offset):
         self.minutes_offset = minutes_offset

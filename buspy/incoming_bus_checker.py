@@ -4,13 +4,13 @@ from buspy.datetime_helpers import now
 class IncomingBusChecker:
     def __init__(self, bus_stop_code, service_no, requested_time, 
                 arrival_getter,
-                range_minutes=10):
+                range_minutes=10, owner_id=None):
         self.bus_stop_code = bus_stop_code
         self.service_no = service_no
         self.requested_time = requested_time
         self.range_minutes = range_minutes
         self.arrival_getter = arrival_getter
-        
+        self.owner_id = owner_id
 
     def check(self, current_time=None):
         arrival_time = self.arrival_getter(self.bus_stop_code, self.service_no)
