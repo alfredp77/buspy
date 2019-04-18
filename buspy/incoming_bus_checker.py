@@ -29,6 +29,23 @@ class IncomingBusChecker:
 
         return None
 
+    def timetobeinbusstop(self, current_time=None):
+        arrival_times = self.arrival_getter(self.bus_stop_code, self.service_no)
+
+        selected_arrival = None
+        for arrival in arrival_times:            
+            min = int((self.requested_time - arrival).total_seconds()/60)
+            print(arrival, min)
+            if min >= 2 and min < self.range_minutes + 2:
+                if not selected_arrival or arrival > selected_arrival:
+                    selected_arrival = arrival
+
+        if selected_arrival:
+            current_time = current_time or now()
+            return int((selected_arrival - current_time).total_seconds()/60 - 2)
+
+        return None
+
     def build_message(self, arrivals):
         return f"Bus {self.service_no} is coming in {', '.join(arrivals)} mins at bus stop {self.bus_stop_code}"
 
