@@ -23,7 +23,7 @@ def main():
         departuretime_original = req["queryResult"]["outputContexts"][0]["parameters"]["DepartureTime.original"]
         departuretime = req["queryResult"]["parameters"]["DepartureTime"]
         
-        checker, resp_text = build_checker(busstop, busno, departuretime, departuretime_original)
+        checker, resp_text = build_checker(busstop, busno, departuretime, departuretime_original, code_formatter=lambda x:f'<say-as interpret-as="characters">{x}</say-as>')
         if checker:            
             mins = checker.timetobeinbusstop()
             if mins:
@@ -34,7 +34,7 @@ def main():
         resp_text = "Unable to find a matching intent. Try again."
 
     resp = {
-        "fulfillmentText": resp_text
+        "fulfillmentText": f"<speak>{resp_text}</speak>"
     }
 
     return Response(json.dumps(resp), status=200, content_type="application/json")

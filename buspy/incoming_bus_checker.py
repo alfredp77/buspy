@@ -30,6 +30,7 @@ class IncomingBusChecker:
         return None
 
     def timetobeinbusstop(self, current_time=None):
+        print("Getting bus arrivals...")
         arrival_times = self.arrival_getter(self.bus_stop_code, self.service_no)
 
         selected_arrival = None
@@ -42,7 +43,7 @@ class IncomingBusChecker:
 
         if selected_arrival:
             current_time = current_time or now()
-            return int((selected_arrival - current_time).total_seconds()/60 - 2)
+            return int((selected_arrival - current_time).total_seconds()/60)
 
         return None
 
