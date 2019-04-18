@@ -10,6 +10,10 @@ rel_path="../buspy/tokens.json"
 with open(rel_path) as f:
     tokens = json.load(f)
 
+rel_path2="../buspy/data/bus_stops.json"
+with open(rel_path2) as f:
+    bus_stops = json.load(f)    
+
 import botogram
 bot = botogram.create(tokens["telegram"])
 
@@ -54,6 +58,11 @@ def nextbus_command(chat, message, args):
     busno  = args[0]
     busstop  = args[1]
     departuretime  = gettime(args[2])
+
+    if busstop not in bus_stops:
+        chat.send(f"I couldn't find your bus stop {args[1]}. Please try again.")
+        return       
+
 
     if not departuretime:
         chat.send(f"I don't understand your time {args[2]}. Please try again.")
