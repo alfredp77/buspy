@@ -64,6 +64,12 @@ def nextbus_command(chat, message, args):
         return
   
     checker = IncomingBusChecker(busstop, busno, departuretime, arrival_fetcher.get_arrival_time, owner_id=chat.id)
+
+    message = checker.firstcheck() 
+    if message:
+        chat.send(message)
+        return
+
     subscriptions.append(checker)
     chat.send(f"I will let you know once the bus {busno} is coming to {busstop} before {departuretime}" )
 

@@ -17,13 +17,27 @@ class IncomingBusChecker:
         return self.requested_time < current_time
 
     def check(self, current_time=None):
-        arrival_time = self.arrival_getter(self.bus_stop_code, self.service_no)
+        arrival_times = self.arrival_getter(self.bus_stop_code, self.service_no)
 
+        arrival_time = arrival_times[0]
         current_time = current_time or now()
         when = arrival_time - current_time
         delta = datetime.timedelta(minutes = self.range_minutes)
         if arrival_time >= self.requested_time - delta: 
-            return f"Bus {self.service_no} is coming in {int(when.total_seconds()/60)} mins at bus stop {self.bus_stop_code}"
+            arrival_str = str(int(when.total_seconds()/60))
+            return self.build_message([arrival_str])
 
-        print(f"Next {self.service_no} is coming in {int(when.total_seconds()/60)} mins at bus stop {self.bus_stop_code}")
-        return ""    
+        return None
+
+    def build_message(self, arrivals):
+        return f"Bus {self.service_no} is coming in {', '.join(arrivals)} mins at bus stop {self.bus_stop_code}"
+
+    def firstcheck(self, current_time=None):
+        current_time = current_time or now() 
+
+        if (self.requested_time - current_time).total_seconds() < self.range_minutes * 60:
+            arrivals = self.arrival_getter(self.bus_stop_code, self.service_no)
+            mins = [str(int((arrival - current_time).total_seconds()/60)) for arrival in arrivals]
+            return self.build_message(mins)
+
+        return None

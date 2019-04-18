@@ -30,7 +30,9 @@ class ArrivalFetcher:
 
     def parse_arrival_data(self, res_json):
         arrival = res_json["Services"][0]["NextBus"]["EstimatedArrival"]
-        return datetime.datetime.fromisoformat(arrival)
+        arrival2 = res_json["Services"][0]["NextBus2"]["EstimatedArrival"]
+        arrival3 = res_json["Services"][0]["NextBus3"]["EstimatedArrival"]
+        return [datetime.datetime.fromisoformat(arrival_str) for arrival_str in [arrival, arrival2, arrival3]]
 
     def build_arrival_time_path(self, bus_stop_code, service_no):
         return f"/BusArrivalv2?BusStopCode={bus_stop_code}&ServiceNo={service_no}"

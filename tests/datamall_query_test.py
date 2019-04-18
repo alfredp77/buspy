@@ -37,15 +37,21 @@ class ArrivalFetcherTests(unittest.TestCase):
         self.fetcher = ArrivalFetcher(self.mock_sender)
     
     def test_should_be_able_to_parse_arrival_time(self):        
-        arrival = self.fetcher.parse_arrival_data(self._data)
-        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:37:43+08:00"), arrival)
+        arrivals = self.fetcher.parse_arrival_data(self._data)
+        self.assertEqual(3, len(arrivals))
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:37:43+08:00"), arrivals[0])
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:46:24+08:00"), arrivals[1])
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:54:01+08:00"), arrivals[2])
 
     def test_get_arrival_time(self):
         self.mock_sender.send.return_value = self._data
         
-        result = self.fetcher.get_arrival_time(67379, 372)
+        arrivals = self.fetcher.get_arrival_time(67379, 372)
         
-        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:37:43+08:00"), result)
+        self.assertEqual(3, len(arrivals))
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:37:43+08:00"), arrivals[0])
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:46:24+08:00"), arrivals[1])
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:54:01+08:00"), arrivals[2])
         self.mock_sender.send.assert_called_once_with(self.fetcher.build_arrival_time_path(67379, 372))
 
 
