@@ -1,5 +1,5 @@
 import datetime
-from buspy.datetime_helpers import now
+from datetime_helpers import now
 
 class IncomingBusChecker:
     def __init__(self, bus_stop_code, service_no, requested_time, 
@@ -11,6 +11,10 @@ class IncomingBusChecker:
         self.range_minutes = range_minutes
         self.arrival_getter = arrival_getter
         self.owner_id = owner_id
+
+    def expired(self, current_time=None):
+        current_time = current_time or now()
+        return self.requested_time < current_time
 
     def check(self, current_time=None):
         arrival_time = self.arrival_getter(self.bus_stop_code, self.service_no)
