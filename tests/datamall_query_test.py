@@ -13,9 +13,6 @@ def load_arrival_test_data():
         return json.load(f)
 
 class RequestSenderTests(unittest.TestCase):
-    def setUp(self):
-        self.request_sender = RequestSender()
-
     def test_send_request_should_return_json(self):  
         data = load_arrival_test_data()      
         mock_response = MagicMock()
