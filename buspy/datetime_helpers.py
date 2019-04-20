@@ -19,6 +19,11 @@ def gettime(time_str, current_time=None):
     except:
         return None
 
+def diff_in_minutes(from_time, to_time):
+    if not to_time:
+        return None
+    return int((to_time - from_time).total_seconds()/60)
+
 class TimeHelper:
     def __init__(self, minutes_offset):
         self.minutes_offset = minutes_offset

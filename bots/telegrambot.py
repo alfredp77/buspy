@@ -1,6 +1,7 @@
 import json
-from checker_builder import build_checker
-from datetime_helpers import gettime
+from buspy.checker_builder import build_checker
+from buspy.datetime_helpers import gettime
+from bots.explain_arrivals import explain
 
 rel_path="../buspy/tokens.json"
 with open(rel_path) as f:
@@ -22,18 +23,22 @@ def init(shared):
     print("subs is about to be set")
     shared["subs"] = []
 
+def get_message(result):
+    message = explain(result)
+    return message.replace('<text>','').replace('</text>','')
 
 @bot.timer(10)
 def check(bot):
     tocheck = subscriptions.copy()
     for checker in tocheck:
-        message = checker.check()
-        if message: 
+        result = checker.time_to_be_at_bus_stop()
+        range_ok = result.within_range or result.outside_range_may_be_acceptable or result.after_requested
+        if range_ok: 
+            message = get_message(result)
             bot.chat(checker.owner_id).send(message)
 
-        if message or checker.expired():
+        if range_ok or checker.expired():
             subscriptions.remove(checker)
-
 
 @bot.command("nextbus")
 def nextbus_command(chat, message, args):
@@ -52,11 +57,16 @@ def nextbus_command(chat, message, args):
     departuretime  = gettime(args[2])
     checker, message = build_checker(busstop, busno, departuretime.isoformat(), args[2], chat.id)
     
-    message = message or checker.firstcheck() 
     if message:
         chat.send(message)
         return
 
+    first_result = checker.time_to_be_at_bus_stop()
+    message = get_message(first_result)
+    if first_result.within_range or first_result.outside_range_may_be_acceptable or first_result.after_requested:
+        chat.send(message)
+        return
+    
     subscriptions.append(checker)
     chat.send(f"I will let you know once the bus {busno} is coming to {busstop} before {departuretime}" )
 

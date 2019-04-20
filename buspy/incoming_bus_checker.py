@@ -1,5 +1,21 @@
 import datetime
-from datetime_helpers import now
+from buspy.datetime_helpers import now, diff_in_minutes
+
+class ArrivalResult:
+    def __init__(self, bus_stop_code, service_no, within_range, outside_range=None, 
+                after_requested=None,
+                no_more=None,
+                outside_range_may_be_acceptable=False):
+        self.bus_stop_code = bus_stop_code
+        self.service_no = service_no
+        self.within_range = within_range
+        self.outside_range = outside_range
+        self.after_requested = after_requested
+        self.no_more = no_more
+        self.outside_range_may_be_acceptable = outside_range_may_be_acceptable
+
+    def is_blank(self):
+        return not self.within_range and not self.outside_range and not self.after_requested
 
 class IncomingBusChecker:
     def __init__(self, bus_stop_code, service_no, requested_time, 
@@ -16,46 +32,33 @@ class IncomingBusChecker:
         current_time = current_time or now()
         return self.requested_time < current_time
 
-    def check(self, current_time=None):
-        arrival_times = self.arrival_getter(self.bus_stop_code, self.service_no)
-
-        arrival_time = arrival_times[0]
-        current_time = current_time or now()
-        when = arrival_time - current_time
-        delta = datetime.timedelta(minutes = self.range_minutes)
-        if arrival_time >= self.requested_time - delta: 
-            arrival_str = str(int(when.total_seconds()/60))
-            return self.build_message([arrival_str])
-
-        return None
-
-    def timetobeinbusstop(self, current_time=None):
+    def time_to_be_at_bus_stop(self, current_time=None):
         print("Getting bus arrivals...")
         arrival_times = self.arrival_getter(self.bus_stop_code, self.service_no)
 
-        selected_arrival = None
+        # TODO: must check first bus and last bus on the bus stop
+
+        arrival_within_range = None
+        arrival_after_requested = None
+        arrival_outside_range = None
         for arrival in arrival_times:            
-            min = int((self.requested_time - arrival).total_seconds()/60)
-            print(arrival, min)
-            if min >= 2 and min < self.range_minutes + 2:
-                if not selected_arrival or arrival > selected_arrival:
-                    selected_arrival = arrival
+            min = diff_in_minutes(arrival, self.requested_time)
+            if min < self.range_minutes:
+                if min > 0:
+                    if not arrival_within_range or arrival > arrival_within_range:
+                        arrival_within_range = arrival
+                else:
+                    if not arrival_after_requested or arrival < arrival_after_requested:
+                        arrival_after_requested = arrival
+            else:
+                arrival_outside_range = arrival
 
-        if selected_arrival:
-            current_time = current_time or now()
-            return int((selected_arrival - current_time).total_seconds()/60)
-
-        return None
-
-    def build_message(self, arrivals):
-        return f"Bus {self.service_no} is coming in {', '.join(arrivals)} mins at bus stop {self.bus_stop_code}"
-
-    def firstcheck(self, current_time=None):
-        current_time = current_time or now() 
-
-        if (self.requested_time - current_time).total_seconds() < self.range_minutes * 60:
-            arrivals = self.arrival_getter(self.bus_stop_code, self.service_no)
-            mins = [str(int((arrival - current_time).total_seconds()/60)) for arrival in arrivals]
-            return self.build_message(mins)
-
-        return None
+        current_time = current_time or now()
+        return ArrivalResult(
+            self.bus_stop_code,
+            self.service_no,
+            diff_in_minutes(current_time, arrival_within_range), 
+            diff_in_minutes(current_time, arrival_outside_range), 
+            diff_in_minutes(current_time, arrival_after_requested),
+            no_more=len(arrival_times)<=1,
+            outside_range_may_be_acceptable=arrival_outside_range and diff_in_minutes(arrival_outside_range, self.requested_time)<self.range_minutes+5)

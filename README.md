@@ -6,7 +6,8 @@ Notify when next bus is coming - for use in Singapore only.
 Please ensure that you put your API tokens in tokens.json, with the following format:
 
 {
-    "lta": "tokenValue"
+    "lta": "tokenValue from LTA Data Mall",
+    "telegram": "get this from botfather"
 }
 
 lta is token for LTA DataMall API

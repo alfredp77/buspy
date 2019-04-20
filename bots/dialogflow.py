@@ -1,8 +1,10 @@
 from flask import Flask, Response, request
 import json
-from incoming_bus_checker import IncomingBusChecker
-from checker_builder import build_checker
-from datamall_query import RequestSender, ArrivalFetcher
+from buspy.incoming_bus_checker import IncomingBusChecker
+from buspy.checker_builder import build_checker
+from buspy.datamall_query import RequestSender, ArrivalFetcher
+from bots.explain_arrivals import explain
+
 import datetime
 
 request_sender = RequestSender()
@@ -24,10 +26,11 @@ def main():
         departuretime = req["queryResult"]["parameters"]["DepartureTime"]
         
         checker, resp_text = build_checker(busstop, busno, departuretime, departuretime_original, code_formatter=lambda x:f'<say-as interpret-as="characters">{x}</say-as>')
-        if checker:            
-            mins = checker.timetobeinbusstop()
-            if mins:
-                resp_text = f"You have to be in bus stop in {mins} minutes"
+        if checker:                                    
+            result = checker.time_to_be_at_bus_stop()
+            resp_text = explain(result)
+            if resp_text:
+                resp_text = resp_text.replace('<text>','<say-as interpret-as="characters">').replace('</text>','</say-as>')
             else:
                 resp_text = "I cannot find bus arrival time near to your departure time. Please try again later"
     else:

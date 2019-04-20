@@ -54,6 +54,15 @@ class ArrivalFetcherTests(unittest.TestCase):
         self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:54:01+08:00"), arrivals[2])
         self.mock_sender.send.assert_called_once_with(self.fetcher.build_arrival_time_path(67379, 372))
 
+    def test_should_not_parse_blank_arrival_times(self):
+        self._data["Services"][0]["NextBus2"]["EstimatedArrival"] = ''
+        self._data["Services"][0]["NextBus3"]["EstimatedArrival"] = ''
+
+        arrivals = self.fetcher.parse_arrival_data(self._data)
+
+        self.assertEqual(1, len(arrivals))
+        self.assertEqual(datetime.datetime.fromisoformat("2019-04-17T13:37:43+08:00"), arrivals[0])
+
 
 if __name__ == '__main__':
     unittest.main()
