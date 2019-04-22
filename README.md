@@ -31,7 +31,8 @@ python -m buspy.bots.telegrambot
 
 ### Features
 * Set a reminder when bus is coming
-  * Usage in telegram: /nextbus [bus no] [bus stop no] [departure time]
+  * Usage in telegram: /nextbus [bus no] [bus stop no] [departure time, HH:mm format]
+  * Example: /nextbus 372 67379 16:00
   If any bus is within 10 minutes of the requested departure time, buspy bot will send a message
   If the departure time is within 10 minutes, buspy will respond immediately, else it will send a reminder message later
   * Not available in dialogflow due to its restriction (requiring user to start the interaction)

@@ -42,8 +42,8 @@ def nextbus_command(chat, message, args):
     """Scheduler reminder when the next bus is coming."""
     
     usage = """
-    Usage: /nextbus <busno> <busstop> <departuretime>
-     Example:  /nextbus 372 67379 10:00
+    Usage: /nextbus <busno> <busstop> <departuretime HH:mm format>
+    Example:  /nextbus 372 67379 10:00
     """
     if len(args) < 3: 
         chat.send(usage)
