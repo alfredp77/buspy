@@ -3,7 +3,7 @@ Notify when next bus is coming - for use in Singapore only.
 
 ## Setting up
 ### Tokens
-Please ensure that you put your API tokens in tokens.json, with the following format:
+Please ensure that you put your API tokens in tokens.json (put it in checkout folder), with the following format:
 ```
 {
     "lta": "tokenValue from LTA Data Mall",
@@ -44,3 +44,5 @@ python -m buspy.bots.telegrambot
   * goto [destination] at [departure time]
   * Example: goto MRT at 10am
   buspy will then suggest the bus to take, and when that bus will come.
+
+* Estimate bus arrival when there is no "Next Bus" data from LTA Data Mall
