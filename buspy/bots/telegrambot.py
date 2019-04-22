@@ -19,7 +19,11 @@ def hello_command(chat, message, args):
 
 def check_and_send_message(chat, checker):
     result = checker.time_to_be_at_bus_stop()
-    if result.within_range or result.outside_range_may_be_acceptable or result.after_requested:
+    can_use_result = (result.within_range 
+                    or (result.outside_range and result.outside_range_may_be_acceptable)
+                    or (not result.outside_range and result.after_requested))
+
+    if can_use_result:
         message = explain(result).replace('<text>','').replace('</text>','')
         chat.send(message)
         return True
