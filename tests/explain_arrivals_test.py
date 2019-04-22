@@ -1,5 +1,5 @@
 import unittest
-from bots.explain_arrivals import explain
+from buspy.bots.explain_arrivals import explain
 from buspy.incoming_bus_checker import ArrivalResult
 
 class ExplainArrivalsTests(unittest.TestCase):

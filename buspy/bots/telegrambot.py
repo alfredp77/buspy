@@ -1,7 +1,7 @@
 import json
 from buspy.checker_builder import build_checker
 from buspy.datetime_helpers import gettime
-from bots.explain_arrivals import explain
+from buspy.bots.explain_arrivals import explain
 
 rel_path="../buspy/tokens.json"
 with open(rel_path) as f:
@@ -17,27 +17,20 @@ def hello_command(chat, message, args):
     """Welcome to buspy. I can help you to find the next bus arrival!"""
     chat.send("Hello world")
 
-
-@bot.prepare_memory
-def init(shared):
-    print("subs is about to be set")
-    shared["subs"] = []
-
-def get_message(result):
-    message = explain(result)
-    return message.replace('<text>','').replace('</text>','')
+def check_and_send_message(chat, checker):
+    result = checker.time_to_be_at_bus_stop()
+    if result.within_range or result.outside_range_may_be_acceptable or result.after_requested:
+        message = explain(result).replace('<text>','').replace('</text>','')
+        chat.send(message)
+        return True
+    return False
 
 @bot.timer(10)
 def check(bot):
     tocheck = subscriptions.copy()
     for checker in tocheck:
-        result = checker.time_to_be_at_bus_stop()
-        range_ok = result.within_range or result.outside_range_may_be_acceptable or result.after_requested
-        if range_ok: 
-            message = get_message(result)
-            bot.chat(checker.owner_id).send(message)
-
-        if range_ok or checker.expired():
+        message_sent = check_and_send_message(bot.chat(checker.owner_id), checker)
+        if message_sent or checker.expired():
             subscriptions.remove(checker)
 
 @bot.command("nextbus")
@@ -61,10 +54,8 @@ def nextbus_command(chat, message, args):
         chat.send(message)
         return
 
-    first_result = checker.time_to_be_at_bus_stop()
-    message = get_message(first_result)
-    if first_result.within_range or first_result.outside_range_may_be_acceptable or first_result.after_requested:
-        chat.send(message)
+    message_sent = check_and_send_message(chat, checker)
+    if message_sent:
         return
     
     subscriptions.append(checker)
