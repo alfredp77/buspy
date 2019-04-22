@@ -1,5 +1,11 @@
 
 def explain(arrival_result, message_code=0):
+    if arrival_result.within_range == 0:
+        message = f"Bus <text>{arrival_result.service_no}</text> is arriving at bus stop <text>{arrival_result.bus_stop_code}</text>"
+        if arrival_result.after_requested:
+            return message + f", and the next one will arrive in {arrival_result.after_requested} minutes"
+        return message
+        
     if arrival_result.within_range:
         if message_code == 0:
             return f"Bus <text>{arrival_result.service_no}</text> will arrive at bus stop <text>{arrival_result.bus_stop_code}</text> in {arrival_result.within_range} minutes time"

@@ -3,6 +3,17 @@ from buspy.bots.explain_arrivals import explain
 from buspy.incoming_bus_checker import ArrivalResult
 
 class ExplainArrivalsTests(unittest.TestCase):
+    def test_bus_is_coming_soon(self):
+        arrival = ArrivalResult(12345, 111, 0)
+        message = explain(arrival)
+        self.assertEqual("Bus <text>111</text> is arriving at bus stop <text>12345</text>", message)
+
+    def test_bus_is_coming_soon_and_next_bus_available(self):
+        arrival = ArrivalResult(12345, 111, 0, after_requested=5)
+        message = explain(arrival)
+        self.assertEqual("Bus <text>111</text> is arriving at bus stop <text>12345</text>, and the next one will arrive in 5 minutes", message)
+
+
     def test_when_within_range_is_available(self):
         arrival = ArrivalResult(12345, 111, 7)
         expected_results = [

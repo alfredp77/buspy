@@ -41,24 +41,35 @@ class IncomingBusChecker:
         arrival_within_range = None
         arrival_after_requested = None
         arrival_outside_range = None
+        mins_within_range = None
+        mins_after_requested = None
+        mins_outside_range = None
+        current_time = current_time or now()
+
         for arrival in arrival_times:            
             min = diff_in_minutes(arrival, self.requested_time)
             if min < self.range_minutes:
-                if min > 0:
+                if min >= 0:
                     if not arrival_within_range or arrival > arrival_within_range:
                         arrival_within_range = arrival
+                        mins_within_range = diff_in_minutes(current_time, arrival)
                 else:
                     if not arrival_after_requested or arrival < arrival_after_requested:
                         arrival_after_requested = arrival
+                        mins_after_requested = diff_in_minutes(current_time, arrival)
             else:
                 arrival_outside_range = arrival
+                mins_outside_range = diff_in_minutes(current_time, arrival)
 
-        current_time = current_time or now()
+        print("arrival_within_range : ", arrival_within_range)
+        print("arrival_after_requested : ", arrival_after_requested)
+        print("arrival_outside_range : ", arrival_outside_range)       
+
         return ArrivalResult(
             self.bus_stop_code,
             self.service_no,
-            diff_in_minutes(current_time, arrival_within_range), 
-            diff_in_minutes(current_time, arrival_outside_range), 
-            diff_in_minutes(current_time, arrival_after_requested),
+            mins_within_range, 
+            mins_outside_range, 
+            mins_after_requested,
             no_more=len(arrival_times)<=1,
             outside_range_may_be_acceptable=arrival_outside_range and diff_in_minutes(arrival_outside_range, self.requested_time)<self.range_minutes+5)

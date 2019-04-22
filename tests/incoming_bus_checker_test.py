@@ -73,6 +73,18 @@ class IncomingBusCheckerTests(unittest.TestCase):
         self.assertEqual(4, result.outside_range)
         self.assertIsNone(result.after_requested)
 
+    def test_time_at_bus_stop_error(self):
+        requested = set_minutes(0.9).after(self.now)
+        arrival1 = self.now
+        arrival2 = set_minutes(4).after(self.now)
+
+        checker = self.setup_checker(requested, 10, arrival1, arrival2)
+        result = checker.time_to_be_at_bus_stop(self.now)
+
+        self.assertEqual(0, result.within_range)
+        self.assertIsNone(result.outside_range)
+        self.assertEqual(4, result.after_requested)
+
 
 if __name__ == '__main__':
     unittest.main()

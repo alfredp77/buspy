@@ -14,8 +14,8 @@ subscriptions = []
 
 @bot.command("hello")
 def hello_command(chat, message, args):
-    """Welcome to buspy. I can help you to find the next bus arrival!"""
-    chat.send("Hello world")
+    """Welcome to buspy. I can help you to find and send reminder when the next bus is coming!"""
+    chat.send("Welcome to buspy. I can help you to find and send reminder when the next bus is coming")
 
 def check_and_send_message(chat, checker):
     result = checker.time_to_be_at_bus_stop()
