@@ -40,6 +40,8 @@ python -m buspy.bots.telegrambot
 * Ask when is the next available bus closest to the requested time
 
 ### Planned features
+* Add capability to automatically update the bus_stops and bus_routes static data
+* Consider first-last bus time on the bus stop when suggesting next bus timing
 * Allow user to define a set of origin-destination map, so user can tell the bot this:
   * goto [destination] at [departure time]
   * Example: goto MRT at 10am
