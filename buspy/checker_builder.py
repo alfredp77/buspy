@@ -15,9 +15,9 @@ rel_path3="../buspy/data/bus_routes.json"
 with open(rel_path3) as f:
     bus_routes = json.load(f)   
 
-def build_checker(bus_stop_code,  service_no, requested_time_str, original_request_time_str, owner_id=None, code_formatter=None):
-    formatted_bus_stop_code = (code_formatter and code_formatter(bus_stop_code)) or bus_stop_code
-    formatted_service_no = (code_formatter and code_formatter(service_no)) or service_no
+def build_checker(bus_stop_code,  service_no, requested_time_str, original_request_time_str, owner_id=None):
+    formatted_bus_stop_code = f"<text>{bus_stop_code}</text>"
+    formatted_service_no = f"<text>{service_no}</text>"
     if bus_stop_code not in bus_stops:
         return (None, f"I couldn't find your bus stop {formatted_bus_stop_code}. Please try again.")
 

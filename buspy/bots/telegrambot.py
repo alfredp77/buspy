@@ -17,6 +17,9 @@ def hello_command(chat, message, args):
     """Welcome to buspy. I can help you to find and send reminder when the next bus is coming!"""
     chat.send("Welcome to buspy. I can help you to find and send reminder when the next bus is coming")
 
+def clean_message(message):
+    return message.replace('<text>','').replace('</text>','')
+
 def check_and_send_message(chat, checker):
     result = checker.time_to_be_at_bus_stop()
     can_use_result = (result.within_range 
@@ -24,7 +27,7 @@ def check_and_send_message(chat, checker):
                     or (not result.outside_range and result.after_requested))
 
     if can_use_result:
-        message = explain(result).replace('<text>','').replace('</text>','')
+        message = clean_message(explain(result))
         chat.send(message)
         return True
     return False
@@ -55,7 +58,7 @@ def nextbus_command(chat, message, args):
     checker, message = build_checker(busstop, busno, departuretime.isoformat(), args[2], chat.id)
     
     if message:
-        chat.send(message)
+        chat.send(clean_message(message))
         return
 
     message_sent = check_and_send_message(chat, checker)
