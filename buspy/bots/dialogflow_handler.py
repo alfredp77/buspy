@@ -39,10 +39,11 @@ def handle_request(req, **kwargs):
     return resp
 
 def handle_getBusArrivalTimeIntent(req, user_id, checker_factory=build_checker, explainer=explain):
-    busno = req["queryResult"]["parameters"]["BusNo"]
-    busstop = req["queryResult"]["parameters"]["BusStopNo"]
+    parameters = req["queryResult"]["parameters"]
+    busno = parameters["BusNo"]
+    busstop = parameters["BusStopNo"]
     departuretime_original = req["queryResult"]["outputContexts"][0]["parameters"]["DepartureTime.original"]
-    departuretime = req["queryResult"]["parameters"]["DepartureTime"]
+    departuretime = parameters["DepartureTime"]
     
     checker, resp_text = checker_factory(busstop, busno, departuretime, departuretime_original)
     if checker:                                    
