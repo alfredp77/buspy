@@ -15,6 +15,7 @@ def main():
     req = request.get_json(silent=True, force=True)
     print(req)
     intent_name = req["queryResult"]["intent"]["displayName"]
+    user_storage = get_user_storage(req)
 
     if intent_name == "GetBusArrivalTimeIntent":
         resp_text = handle_getBusArrivalTimeIntent(req)
@@ -23,9 +24,20 @@ def main():
 
     resp = {
         "fulfillmentText": f"<speak>{resp_text}</speak>",
+        "payload": {
+            "google": {
+                "userStorage": user_storage
+            }
+        }
     }
 
     return Response(json.dumps(resp), status=200, content_type="application/json")
+
+def get_user_storage(req):
+    user_storage = req["originalDetectIntentRequest"]["payload"]["user"].get("userStorage", {})
+    if type(user_storage) == str:
+        user_storage = json.loads(user_storage)
+    return user_storage
 
 def handle_getBusArrivalTimeIntent(req):
     busno = req["queryResult"]["parameters"]["BusNo"]
