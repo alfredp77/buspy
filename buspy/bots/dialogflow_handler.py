@@ -16,7 +16,17 @@ def get_user_id(user_storage):
         user_storage["userId"] = user_id
     return user_id
 
-def handle_request(req, **kwargs):
+def build_response(text, user_storage):
+    return  {
+        "fulfillmentText": f"<speak>{text}</speak>",
+        "payload": {
+            "google": {
+                "userStorage": user_storage
+            }
+        }
+    }
+
+def handle_request(req, response_builder=build_response, **kwargs):
     intent_name = req["queryResult"]["intent"]["displayName"]
     user_storage = get_user_storage(req)
     user_id = get_user_id(user_storage)
@@ -27,16 +37,7 @@ def handle_request(req, **kwargs):
     else:
         resp_text = "Unable to find a matching intent. Try again."
 
-    resp = {
-        "fulfillmentText": f"<speak>{resp_text}</speak>",
-        "payload": {
-            "google": {
-                "userStorage": user_storage
-            }
-        }
-    }
-
-    return resp
+    return response_builder(resp_text, user_storage)
 
 def handle_getBusArrivalTimeIntent(req, user_id, checker_factory=build_checker, explainer=explain):
     parameters = req["queryResult"]["parameters"]
