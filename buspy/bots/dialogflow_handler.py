@@ -39,12 +39,16 @@ def handle_request(req, response_builder=build_response, **kwargs):
 
     return response_builder(resp_text, user_storage)
 
+def get_departure_time(req):
+    departuretime_original = req["queryResult"]["outputContexts"][0]["parameters"].get("DepartureTime.original")
+    departuretime = req["queryResult"]["parameters"].get("DepartureTime")
+    return (departuretime, departuretime_original)
+
 def handle_getBusArrivalTimeIntent(req, user_id, checker_factory=build_checker, explainer=explain):
     parameters = req["queryResult"]["parameters"]
     busno = parameters["BusNo"]
     busstop = parameters["BusStopNo"]
-    departuretime_original = req["queryResult"]["outputContexts"][0]["parameters"]["DepartureTime.original"]
-    departuretime = parameters["DepartureTime"]
+    departuretime, departuretime_original = get_departure_time(req)
     
     checker, resp_text = checker_factory(busstop, busno, departuretime, departuretime_original)
     if checker:                                    
@@ -56,3 +60,6 @@ def handle_getBusArrivalTimeIntent(req, user_id, checker_factory=build_checker, 
     else:
         resp_text = "I cannot find bus arrival time near to your departure time. Please try again later"
     return resp_text
+
+def handle_suggestBusIntent(req, user_id, checker_factory=build_checker, explainer=explain):
+    pass
